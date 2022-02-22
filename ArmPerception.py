@@ -20,10 +20,22 @@ class ColorTracker():
 
     def __init__(self):
         self.img_size = (640, 480)
+        self.get_roi = False
+
+        self.range_rgb = {
+            'red': (0, 0, 255),
+            'blue': (255, 0, 0),
+            'green': (0, 255, 0),
+            'black': (0, 0, 0),
+            'white': (255, 255, 255),
+            }
 
     def detect_cube_center(self, img):
         self.prepare_image(img)
-        return self.detect_color_contours('red')
+        red_mask, area_redmaxcontour, area_redmax = self.detect_color_contours('red')
+        if area_redmax > 2500:
+            self.get_bounding_box(area_redmaxcontour, 'red')
+        return self.og_img
 
     def prepare_image(self, img):
         self.og_img = img 
@@ -48,7 +60,7 @@ class ColorTracker():
         contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2] 
         areaMaxContour, area_max = self.getAreaMaxContour(contours)  # 找出最大轮廓 find the largest contour
         print("max area is: {}".format(area_max))
-        return frame_mask
+        return closed, areaMaxContour, area_max
 
     def getAreaMaxContour(self, contours):
         contour_area_temp = 0
@@ -63,6 +75,21 @@ class ColorTracker():
                     area_max_contour = c
 
         return area_max_contour, contour_area_max
+
+    def get_bounding_box(self, contour, color):
+        rect = cv2.minAreaRect(contour)
+        box = np.int0(cv2.boxPoints(rect))
+
+        roi = getROI(box)
+        self.get_roi = True
+
+        img_centerx, img_centery = getCenter(rect, roi, self.img_size, square_length)  # 获取木块中心坐标 get the coordinates of the center of the block
+        world_x, world_y = convertCoordinate(img_centerx, img_centery, self.img_size) #转换为现实世界坐标 convert to real world coordinates
+        
+        # draw box and middle point
+        cv2.drawContours(self.og_img, [box], -1, self.range_rgb[color], 2)
+        cv2.putText(self.og_img, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.range_rgb[color], 1) #绘制中心点 draw center point
 
 
 if __name__ == '__main__':
