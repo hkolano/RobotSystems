@@ -40,7 +40,29 @@ class ColorTracker():
 
     def detect_color_contours(self, detect_color):
         frame_mask = cv2.inRange(self.prepped_img, color_range[detect_color][0], color_range[detect_color][1])
+        # Erosion then dilation of mask
+        opened = cv2.morphologyEx(frame_mask, cv2.MORPH_OPEN, np.ones((6, 6), np.uint8)) 
+        # dilation then erosion of mask
+        closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, np.ones((6, 6), np.uint8)) 
+        # look at the mask for contours, select the biggest
+        contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2] 
+        areaMaxContour, area_max = self.getAreaMaxContour(contours)  # 找出最大轮廓 find the largest contour
+        print("max area is: {}".format(area_max))
         return frame_mask
+
+    def getAreaMaxContour(self, contours):
+        contour_area_temp = 0
+        contour_area_max = 0
+        area_max_contour = None
+
+        for c in contours:  # iterate over all contours
+            contour_area_temp = math.fabs(cv2.contourArea(c))  # calculate the contour area
+            if contour_area_temp > contour_area_max:
+                contour_area_max = contour_area_temp
+                if contour_area_temp > 300:  # The contour with the largest area is valid only if the area is greater than 300 to filter out the noise
+                    area_max_contour = c
+
+        return area_max_contour, contour_area_max
 
 
 if __name__ == '__main__':
