@@ -31,20 +31,26 @@ class ColorTracker():
             }
 
     def detect_cube_center(self, img):
+        ''' Main flight code. Detects red objects and draws a bounding box.'''
+        desired_color = 'red'
         self.prepare_image(img)
-        red_mask, area_redmaxcontour, area_redmax = self.detect_color_contours('red')
-        if area_redmax > 2500:
-            self.get_bounding_box(area_redmaxcontour, 'red')
-        return self.og_img
+        mask, max_contour, max_area = self.detect_color_contours(desired_color)
+        if max_area > 2500:
+            self.get_bounding_box(max_contour, desired_color)
+        return self.img_copy
 
     def prepare_image(self, img):
+        ''' 
+        Input: image from camera
+        Process: preps image for color detection, saves to self.prepped_img 
+        '''
         self.og_img = img 
-        self.img_copy = img.copy()
+        self.img_copy = img.copy() # make a copy of the image
         self.img_h, self.img_w = img.shape[:2]
 
         # Draw the center line
-        cv2.line(img, (0, int(self.img_h / 2)), (self.img_w, int(self.img_h / 2)), (0, 0, 200), 1)
-        cv2.line(img, (int(self.img_w / 2), 0), (int(self.img_w / 2), self.img_h), (0, 0, 200), 1)
+        cv2.line(self.img_copy, (0, int(self.img_h / 2)), (self.img_w, int(self.img_h / 2)), (0, 0, 200), 1)
+        cv2.line(self.img_copy, (int(self.img_w / 2), 0), (int(self.img_w / 2), self.img_h), (0, 0, 200), 1)
         
         # Resize the image
         frame_resize = cv2.resize(self.img_copy, self.img_size, interpolation=cv2.INTER_NEAREST)
@@ -55,6 +61,11 @@ class ColorTracker():
         self.prepped_img = frame_lab
 
     def detect_color_contours(self, detect_color):
+        '''
+        Input: desired color string
+        Performs some image processing to get a mask detecting the given color; finds contours on that image.
+        Returns: masked image (1=object, 0=not object), biggest contour of that color, area of biggest contour
+        '''
         frame_mask = cv2.inRange(self.prepped_img, color_range[detect_color][0], color_range[detect_color][1])
         # Erosion then dilation of mask
         opened = cv2.morphologyEx(frame_mask, cv2.MORPH_OPEN, np.ones((6, 6), np.uint8)) 
@@ -67,6 +78,11 @@ class ColorTracker():
         return closed, areaMaxContour, area_max
 
     def getAreaMaxContour(self, contours):
+        '''
+        Directly copied from ColorTracking.py. 
+        Input: list of contours
+        output: the area and contour object of the largest contour
+        '''
         contour_area_temp = 0
         contour_area_max = 0
         area_max_contour = None
@@ -81,6 +97,10 @@ class ColorTracker():
         return area_max_contour, contour_area_max
 
     def get_bounding_box(self, contour, color):
+        '''
+        Inputs: a contour and the color object it represents
+        Draws the bounding box on the original camera image
+        '''
         rect = cv2.minAreaRect(contour)
         box = np.int0(cv2.boxPoints(rect))
 
@@ -91,8 +111,8 @@ class ColorTracker():
         world_x, world_y = convertCoordinate(img_centerx, img_centery, self.img_size) #转换为现实世界坐标 convert to real world coordinates
         
         # draw box and middle point
-        cv2.drawContours(self.og_img, [box], -1, self.range_rgb[color], 2)
-        cv2.putText(self.og_img, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
+        cv2.drawContours(self.img_copy, [box], -1, self.range_rgb[color], 2)
+        cv2.putText(self.img_copy, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.range_rgb[color], 1) #绘制中心点 draw center point
 
 
