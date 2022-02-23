@@ -32,11 +32,12 @@ class ColorTracker():
 
     def detect_cube_center(self, img):
         ''' Main flight code. Detects red objects and draws a bounding box.'''
-        desired_color = 'red'
+        desired_colors = ['red', 'blue', 'green']
         self.prepare_image(img)
-        mask, max_contour, max_area = self.detect_color_contours(desired_color)
-        if max_area > 2500:
-            self.get_bounding_box(max_contour, desired_color)
+        for color in desired_colors:
+            mask, max_contour, max_area = self.detect_color_contours(color)
+            if max_area > 2500:
+                self.get_bounding_box(max_contour, color)
         return self.img_copy
 
     def prepare_image(self, img):
