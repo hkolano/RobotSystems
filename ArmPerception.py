@@ -63,7 +63,7 @@ class ColorTracker():
         # look at the mask for contours, select the biggest
         contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2] 
         areaMaxContour, area_max = self.getAreaMaxContour(contours)  # 找出最大轮廓 find the largest contour
-        print("max area is: {}".format(area_max))
+        # print("max area is: {}".format(area_max))
         return closed, areaMaxContour, area_max
 
     def getAreaMaxContour(self, contours):
