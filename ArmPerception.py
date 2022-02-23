@@ -41,6 +41,10 @@ class ColorTracker():
         self.og_img = img 
         self.img_copy = img.copy()
         self.img_h, self.img_w = img.shape[:2]
+
+        # Draw the center line
+        cv2.line(img, (0, int(img_h / 2)), (img_w, int(img_h / 2)), (0, 0, 200), 1)
+        cv2.line(img, (int(img_w / 2), 0), (int(img_w / 2), img_h), (0, 0, 200), 1)
         
         # Resize the image
         frame_resize = cv2.resize(self.img_copy, self.img_size, interpolation=cv2.INTER_NEAREST)
