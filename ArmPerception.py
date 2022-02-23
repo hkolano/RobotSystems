@@ -30,7 +30,7 @@ class ColorTracker():
             'white': (255, 255, 255),
             }
 
-    def detect_cube_center(self, img):
+    def detect_cubes(self, img):
         ''' Main flight code. Detects red objects and draws a bounding box.'''
         desired_colors = ['red', 'blue', 'green']
         self.prepare_image(img)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     while True:
         img = my_camera.frame
         if img is not None:
-            frame = p.detect_cube_center(img)
+            frame = p.detect_cubes(img)
             cv2.imshow('Frame', frame)
             key = cv2.waitKey(1)
             if key == 27:
