@@ -35,13 +35,20 @@ class ColorTracker():
             'green': [0, 0]
         }
 
+    def get_detected_blocks(self):
+        detected_colors = []
+        for color in self.cube_locs.keys:
+            if self.cube_locs[color] != [0, 0]:
+                detected_colors.append(color)
+        return detected_colors
+
     def detect_cubes(self, img):
         ''' Main flight code. Detects red objects and draws a bounding box.'''
         desired_colors = ['red', 'blue', 'green']
         self.prepare_image(img)
         for color in desired_colors:
             self.update_cube_location(color)
-        print(self.cube_locs)
+        print(self.get_detected_blocks())
         return self.img_copy
 
     def update_cube_location(self, color):
