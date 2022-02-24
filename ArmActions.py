@@ -42,8 +42,8 @@ class ArmMover():
     def set_lights_to_color(self, color=None):
         print(self.range_rgb[color])
         if color is not None:
-            Board.RGB.setPixelColor(0, Board.PixelColor(self.range_rgb[color]))
-            Board.RGB.setPixelColor(1, Board.PixelColor(self.range_rgb[color]))
+            Board.RGB.setPixelColor(0, Board.PixelColor(*self.range_rgb[color]))
+            Board.RGB.setPixelColor(1, Board.PixelColor(*self.range_rgb[color]))
         else:
             Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
             Board.RGB.setPixelColor(1, Board.PixelColor(0, 0, 0))
