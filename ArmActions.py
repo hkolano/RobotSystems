@@ -85,6 +85,7 @@ if __name__ == "__main__":
 
     cube_locations = p.get_cube_locs()
     if m.check_if_reachable(cube_locations['red']):
+        print("Red cube is reachable.")
         m.set_up_grasp(cube_locations['red'])
     # m.check_if_reachable(p.get['red'])
     
