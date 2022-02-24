@@ -68,11 +68,15 @@ class ArmMover():
             return True
         # time.sleep(result[2]/1000)
 
-    def set_up_grasp(self, coords):
+    def grasp_cube_at_coords(self, coords):
         servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
         self.open_gripper()
+        # Move to above cube
         Board.setBusServoPulse(2, servo2_angle, 500)
-        time.sleep(0.8)
+        time.sleep(1.5)
+        #???
+        self.AK.setPitchRangeMoving((world_X, world_Y, 1.5), -90, -90, 0, 1000)
+        time.sleep(1.5)
 
     def open_gripper(self):
         Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
@@ -100,7 +104,7 @@ if __name__ == "__main__":
             cube_locations = p.get_cube_locs()
             if m.check_if_reachable(cube_locations['red']):
                 print("Red cube is reachable.")
-                m.set_up_grasp(cube_locations['red'])
+                m.grasp_cube_at_coords(cube_locations['red'])
                 in_position = True
             key = cv2.waitKey(1)
             if key == 27:
