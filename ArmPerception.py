@@ -34,6 +34,7 @@ class ColorTracker():
             'blue': [0, 0],
             'green': [0, 0]
         }
+        # self.rects = 
 
     def get_detected_blocks(self):
         detected_colors = []
@@ -45,6 +46,7 @@ class ColorTracker():
     def get_cube_locs(self):
         return self.cube_locs
 
+
     def detect_cubes(self, img):
         ''' Main flight code. Detects red objects and draws a bounding box.'''
         desired_colors = ['red', 'blue', 'green']
@@ -54,12 +56,14 @@ class ColorTracker():
         # print(self.get_detected_blocks())
         return self.img_copy
 
+
     def update_cube_location(self, color):
         mask, max_contour, max_area = self.detect_color_contours(color)
         if max_area > 2500:
-            self.get_bounding_box(max_contour, color)
+            biggest_contour_rect = self.get_bounding_box(max_contour, color)
         else:
             self.cube_locs[color] = [0, 0]
+
 
     def prepare_image(self, img):
         ''' 
@@ -137,6 +141,8 @@ class ColorTracker():
         cv2.drawContours(self.img_copy, [box], -1, self.range_rgb[color], 2)
         cv2.putText(self.img_copy, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.range_rgb[color], 1) #绘制中心点 draw center point
+        print(rect[2])
+        return rect
 
 
 if __name__ == '__main__':
