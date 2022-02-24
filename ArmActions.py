@@ -42,7 +42,8 @@ class ArmMover():
 
     def go_to_initial_position(self):
         logging.info("Moving arm to initial position.")
-        Board.setBusServoPulse(1, self.close_gripper_servo_value - 50, 300)
+        self.open_gripper()
+        time.sleep(1.0)
         Board.setBusServoPulse(2, 500, 500)
         self.AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
 
