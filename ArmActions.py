@@ -74,7 +74,10 @@ if __name__ == "__main__":
     m = ArmMover()
     m.go_to_initial_position()
     time.sleep(0.5)
-    m.check_if_reachable(p.cube_locs['red'])
+
+    cube_locations = p.get_cube_locs()
+    m.check_if_reachable(cube_locations['red'])
+    # m.check_if_reachable(p.get['red'])
     
     # detected_blocks = p.get_detected_blocks()
 

@@ -42,6 +42,9 @@ class ColorTracker():
                 detected_colors.append(color)
         return detected_colors
 
+    def get_cube_locs(self):
+        return self.cube_locs
+
     def detect_cubes(self, img):
         ''' Main flight code. Detects red objects and draws a bounding box.'''
         desired_colors = ['red', 'blue', 'green']
