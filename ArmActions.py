@@ -60,8 +60,10 @@ class ArmMover():
     def check_if_reachable(self, coords):
         result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
         if result == False:
+            print("not reachable.")
             return False
         else:
+            print("reachable!")
             return True
 
     def set_up_grasp(self, coords):
