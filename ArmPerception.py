@@ -37,7 +37,7 @@ class ColorTracker():
 
     def get_detected_blocks(self):
         detected_colors = []
-        for color in self.cube_locs.keys:
+        for color in self.cube_locs.keys():
             if self.cube_locs[color] != [0, 0]:
                 detected_colors.append(color)
         return detected_colors
