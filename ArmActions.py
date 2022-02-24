@@ -40,6 +40,7 @@ class ArmMover():
         self.AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
 
     def set_lights_to_color(self, color=None):
+        print(self.range_rgb[color])
         if color is not None:
             Board.RGB.setPixelColor(0, Board.PixelColor(self.range_rgb[color]))
             Board.RGB.setPixelColor(1, Board.PixelColor(self.range_rgb[color]))
