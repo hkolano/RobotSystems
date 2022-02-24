@@ -29,16 +29,27 @@ class ColorTracker():
             'black': (0, 0, 0),
             'white': (255, 255, 255),
             }
+        self.cube_locs = {
+            'red': [0, 0],
+            'blue': [0, 0],
+            'green': [0, 0]
+        }
 
     def detect_cubes(self, img):
         ''' Main flight code. Detects red objects and draws a bounding box.'''
         desired_colors = ['red', 'blue', 'green']
         self.prepare_image(img)
         for color in desired_colors:
-            mask, max_contour, max_area = self.detect_color_contours(color)
-            if max_area > 2500:
-                self.get_bounding_box(max_contour, color)
+            self.update_cube_location(color)
+        print(self.cube_locs)
         return self.img_copy
+
+    def update_cube_location(self, color):
+        mask, max_contour, max_area = self.detect_color_contours(color)
+        if max_area > 2500:
+            self.get_bounding_box(max_contour, color)
+        else:
+            self.cube_locs[color] = [0, 0]
 
     def prepare_image(self, img):
         ''' 
@@ -110,7 +121,8 @@ class ColorTracker():
 
         img_centerx, img_centery = getCenter(rect, roi, self.img_size, square_length)  # 获取木块中心坐标 get the coordinates of the center of the block
         world_x, world_y = convertCoordinate(img_centerx, img_centery, self.img_size) #转换为现实世界坐标 convert to real world coordinates
-        
+        self.cube_locs[color] = [world_x, world_y]
+
         # draw box and middle point
         cv2.drawContours(self.img_copy, [box], -1, self.range_rgb[color], 2)
         cv2.putText(self.img_copy, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),

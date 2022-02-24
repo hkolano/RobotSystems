@@ -12,6 +12,7 @@ from ArmIK.ArmMoveIK import *
 import HiwonderSDK.Board as Board
 from CameraCalibration.CalibrationConfig import *
 import logging
+from ArmPerception import ColorTracker
 
 
 if sys.version_info.major == 2:
@@ -26,11 +27,17 @@ class ArmMover():
         self.AK = ArmIK() 
 
         self.range_rgb = {
-            'red': (0, 0, 255),
-            'blue': (255, 0, 0),
+            'blue': (0, 0, 255),
+            'red': (255, 0, 0),
             'green': (0, 255, 0),
             'black': (0, 0, 0),
             'white': (255, 255, 255),
+            }
+
+        self.coordinate = {
+            'red':   (-15 + 0.5, 12 - 0.5, 1.5),
+            'green': (-15 + 0.5, 6 - 0.5,  1.5),
+            'blue':  (-15 + 0.5, 0 - 0.5,  1.5),
             }
 
     def go_to_initial_position(self):
@@ -40,7 +47,7 @@ class ArmMover():
         self.AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
 
     def set_lights_to_color(self, color=None):
-        print(self.range_rgb[color])
+        # print(self.range_rgb[color])
         if color is not None:
             Board.RGB.setPixelColor(0, Board.PixelColor(*self.range_rgb[color]))
             Board.RGB.setPixelColor(1, Board.PixelColor(*self.range_rgb[color]))
@@ -48,11 +55,34 @@ class ArmMover():
             Board.RGB.setPixelColor(0, Board.PixelColor(0, 0, 0))
             Board.RGB.setPixelColor(1, Board.PixelColor(0, 0, 0))
 
-        Board.RGB.show()        
+        Board.RGB.show()
+
+    def check_if_reachable(self, coords):
+        result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
+
+    def open_gripper(self):
+        Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
+
+    def close_gripper(self):
+        Board.setBusServoPulse(1, self.close_gripper_servo_value, 500)     
 
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
+    p = ColorTracker
     m = ArmMover()
     m.go_to_initial_position()
-    m.set_lights_to_color("red")
+
+    # my_camera = Camera.Camera() 
+    # my_camera.camera_open()
+    # while True:
+    #     img = my_camera.frame
+    #     if img is not None:
+    #         frame = p.detect_cubes(img)
+    #         cv2.imshow('Frame', frame)
+    #         key = cv2.waitKey(1)
+    #         if key == 27:
+    #             break 
+    # my_camera.camera_close()
+    # cv2.destroyAllWindows()
+    
