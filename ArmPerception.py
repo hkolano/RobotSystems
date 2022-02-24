@@ -29,17 +29,18 @@ class ColorTracker():
             'black': (0, 0, 0),
             'white': (255, 255, 255),
             }
+        # World x, world y, angle of rotation
         self.cube_locs = {
-            'red': [0, 0],
-            'blue': [0, 0],
-            'green': [0, 0]
+            'red': [0, 0, 0],
+            'blue': [0, 0, 0],
+            'green': [0, 0, 0]
         }
         # self.rects = 
 
     def get_detected_blocks(self):
         detected_colors = []
         for color in self.cube_locs.keys():
-            if self.cube_locs[color] != [0, 0]:
+            if self.cube_locs[color] != [0, 0, 0]:
                 detected_colors.append(color)
         return detected_colors
 
@@ -62,7 +63,7 @@ class ColorTracker():
         if max_area > 2500:
             biggest_contour_rect = self.get_bounding_box(max_contour, color)
         else:
-            self.cube_locs[color] = [0, 0]
+            self.cube_locs[color] = [0, 0, 0]
 
 
     def prepare_image(self, img):
@@ -135,14 +136,13 @@ class ColorTracker():
 
         img_centerx, img_centery = getCenter(rect, roi, self.img_size, square_length)  # 获取木块中心坐标 get the coordinates of the center of the block
         world_x, world_y = convertCoordinate(img_centerx, img_centery, self.img_size) #转换为现实世界坐标 convert to real world coordinates
-        self.cube_locs[color] = [world_x, world_y]
+        self.cube_locs[color] = [world_x, world_y, rect[2]] # rect[2] is angle of rotation
 
         # draw box and middle point
         cv2.drawContours(self.img_copy, [box], -1, self.range_rgb[color], 2)
         cv2.putText(self.img_copy, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.range_rgb[color], 1) #绘制中心点 draw center point
-        print(rect[2])
-        return rect
+
 
 
 if __name__ == '__main__':
