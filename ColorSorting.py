@@ -52,9 +52,11 @@ def getAreaMaxContour(contours) :
         return area_max_contour, contour_area_max  #返回最大的轮廓
 
 # 夹持器夹取时闭合的角度
+# The angle at which the gripper closes when gripping
 servo1 = 500
 
 # 初始位置
+# initial position
 def initMove():
     Board.setBusServoPulse(1, servo1 - 50, 300)
     Board.setBusServoPulse(2, 500, 500)
@@ -67,6 +69,7 @@ def setBuzzer(timer):
     Board.setBuzzer(0)
 
 #设置扩展板的RGB灯颜色使其跟要追踪的颜色一致
+# Set the color of the RGB lights of the expansion board to match the color to be tracked
 def set_rgb(color):
     if color == "red":
         Board.RGB.setPixelColor(0, Board.PixelColor(255, 0, 0))
@@ -153,6 +156,7 @@ def move():
     global world_X, world_Y
     
     #放置坐标
+    # placement coordinates
     coordinate = {
         'red':   (-15 + 0.5, 12 - 0.5, 1.5),
         'green': (-15 + 0.5, 6 - 0.5,  1.5),
@@ -161,8 +165,11 @@ def move():
     while True:
         if __isRunning:        
             if detect_color != 'None' and start_pick_up:  #如果检测到方块没有移动一段时间后，开始夹取
+                # If it detects that the block has not moved for a period of time, start gripping
                 #移到目标位置，高度6cm, 通过返回的结果判断是否能到达指定位置
+                # Move to the target position, the height is 6cm, and judge whether the specified position can be reached by the returned result
                 #如果不给出运行时间参数，则自动计算，并通过结果返回
+                # If no runtime parameter is given, it is automatically calculated and returned with the result
                 set_rgb(detect_color)
                 setBuzzer(0.1)
                 result = AK.setPitchRangeMoving((world_X, world_Y, 7), -90, -90, 0)  
@@ -170,12 +177,11 @@ def move():
                     unreachable = True
                 else:
                     unreachable = False
-                    time.sleep(result[2]/1000) #如果可以到达指定位置，则获取运行时间
-
+                    time.sleep(result[2]/1000) #If the specified location can be reached, get the running time
                     if not __isRunning:
                         continue
-                    servo2_angle = getAngle(world_X, world_Y, rotation_angle) #计算夹持器需要旋转的角度
-                    Board.setBusServoPulse(1, servo1 - 280, 500)  # 爪子张开
+                    servo2_angle = getAngle(world_X, world_Y, rotation_angle) #Calculate the angle by which the gripper needs to be rotated
+                    Board.setBusServoPulse(1, servo1 - 280, 500)  # 爪子张开 paws open
                     Board.setBusServoPulse(2, servo2_angle, 500)
                     time.sleep(0.5)
                     
@@ -186,13 +192,13 @@ def move():
 
                     if not __isRunning:
                         continue
-                    Board.setBusServoPulse(1, servo1, 500)  #夹持器闭合
+                    Board.setBusServoPulse(1, servo1, 500)  #夹持器闭合 gripper closed
                     time.sleep(0.8)
 
                     if not __isRunning:
                         continue
                     Board.setBusServoPulse(2, 500, 500)
-                    AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  #机械臂抬起
+                    AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  #机械臂抬起 the robotic arm is raised
                     time.sleep(1)
 
                     if not __isRunning:
@@ -218,7 +224,7 @@ def move():
 
                     if not __isRunning:
                         continue
-                    Board.setBusServoPulse(1, servo1 - 200, 500)  # 爪子张开  ，放下物体
+                    Board.setBusServoPulse(1, servo1 - 200, 500)  # 爪子张开  ，放下物体 claws open to drop objects
                     time.sleep(0.8)
 
                     if not __isRunning:
@@ -226,7 +232,7 @@ def move():
                     AK.setPitchRangeMoving((coordinate[detect_color][0], coordinate[detect_color][1], 12), -90, -90, 0, 800)
                     time.sleep(0.8)
 
-                    initMove()  # 回到初始位置
+                    initMove()  # 回到初始位置 return to original position
                     time.sleep(1.5)
 
                     detect_color = 'None'
@@ -243,7 +249,7 @@ def move():
                 time.sleep(1.5)
             time.sleep(0.01)
           
-#运行子线程
+#运行子线程 run child thread
 th = threading.Thread(target=move)
 th.setDaemon(True)
 th.start()    
@@ -279,6 +285,7 @@ def run(img):
     frame_resize = cv2.resize(img_copy, size, interpolation=cv2.INTER_NEAREST)
     frame_gb = cv2.GaussianBlur(frame_resize, (11, 11), 11)
     #如果检测到某个区域有识别到的物体，则一直检测该区域直到没有为止
+    # If an area is detected with a recognized object, the area will be detected until there is none
     if get_roi and not start_pick_up:
         get_roi = False
         frame_gb = getMaskROI(frame_gb, roi, size)      
@@ -313,12 +320,12 @@ def run(img):
             
             cv2.drawContours(img, [box], -1, range_rgb[color_area_max], 2)
             cv2.putText(img, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, range_rgb[color_area_max], 1) #绘制中心点
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, range_rgb[color_area_max], 1) #绘制中心点 draw center point
             
-            distance = math.sqrt(pow(world_x - last_x, 2) + pow(world_y - last_y, 2)) #对比上次坐标来判断是否移动
+            distance = math.sqrt(pow(world_x - last_x, 2) + pow(world_y - last_y, 2)) #Compare the last coordinates to determine whether to move
             last_x, last_y = world_x, world_y
             if not start_pick_up:
-                if color_area_max == 'red':  #红色最大
+                if color_area_max == 'red':  #红色最大 red max
                     color = 1
                 elif color_area_max == 'green':  #绿色最大
                     color = 2
@@ -327,7 +334,7 @@ def run(img):
                 else:
                     color = 0
                 color_list.append(color)
-                # 累计判断
+                # 累计判断 cumulative judgment
                 if distance < 0.5:
                     count += 1
                     center_list.extend((world_x, world_y))
@@ -347,8 +354,8 @@ def run(img):
                     center_list = []
                     count = 0
 
-                if len(color_list) == 3:  #多次判断
-                    # 取平均值
+                if len(color_list) == 3:  #多次判断 multiple judgments
+                    # 取平均值 take the average
                     color = int(round(np.mean(np.array(color_list))))
                     color_list = []
                     if color == 1:
