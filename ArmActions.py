@@ -59,7 +59,15 @@ class ArmMover():
 
     def check_if_reachable(self, coords):
         result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
-        print(result)
+        if result == False:
+            return False
+        else:
+            return True
+
+    def set_up_grasp(self, coords):
+        servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
+        self.open_gripper()
+        Board.setBusServoPulse(2, servo2_angle, 500)
 
     def open_gripper(self):
         Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
@@ -76,7 +84,8 @@ if __name__ == "__main__":
     time.sleep(0.5)
 
     cube_locations = p.get_cube_locs()
-    m.check_if_reachable(cube_locations['red'])
+    if m.check_if_reachable(cube_locations['red']):
+        m.set_up_grasp(cube_locations['red'])
     # m.check_if_reachable(p.get['red'])
     
     # detected_blocks = p.get_detected_blocks()
