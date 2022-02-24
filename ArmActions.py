@@ -34,5 +34,6 @@ class ArmMover():
 
 
 if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.INFO)
     m = ArmMover()
     m.go_to_initial_position()
