@@ -74,9 +74,16 @@ class ArmMover():
         # Move to above cube
         Board.setBusServoPulse(2, servo2_angle, 500)
         time.sleep(1.5)
-        #???
+        # Lower to around cube
         self.AK.setPitchRangeMoving((coords[0], coords[1], 1.5), -90, -90, 0, 1000)
         time.sleep(1.5)
+        # close gripper
+        self.close_gripper()
+        # raise the arm with the cube
+        Board.setBusServoPulse(2, 500, 500)
+        self.AK.setPitchRangeMoving((coords[0], coords[1], 12), -90, -90, 0, 1000)
+        time.sleep(1)
+
 
     def open_gripper(self):
         Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
