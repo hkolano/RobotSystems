@@ -71,6 +71,7 @@ class ArmMover():
     def grasp_cube_at_coords(self, coords):
         servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
         self.open_gripper()
+        time.sleep(0.5)
         # Move to above cube
         Board.setBusServoPulse(2, servo2_angle, 500)
         time.sleep(1.5)
@@ -79,6 +80,7 @@ class ArmMover():
         time.sleep(1.5)
         # close gripper
         self.close_gripper()
+        time.sleep(0.5)
         # raise the arm with the cube
         Board.setBusServoPulse(2, 500, 500)
         self.AK.setPitchRangeMoving((coords[0], coords[1], 12), -90, -90, 0, 1000)
