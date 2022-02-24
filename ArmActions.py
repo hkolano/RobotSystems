@@ -70,7 +70,7 @@ class ArmMover():
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
-    p = ColorTracker
+    p = ColorTracker()
     m = ArmMover()
     m.go_to_initial_position()
     time.sleep(0.5)
