@@ -72,6 +72,7 @@ class ArmMover():
         servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
         self.open_gripper()
         Board.setBusServoPulse(2, servo2_angle, 500)
+        time.sleep(0.8)
 
     def open_gripper(self):
         Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
@@ -85,26 +86,25 @@ if __name__ == "__main__":
     p = ColorTracker()
     m = ArmMover()
     m.go_to_initial_position()
-    time.sleep(0.5)
-
-    cube_locations = p.get_cube_locs()
-    if m.check_if_reachable(cube_locations['red']):
-        print("Red cube is reachable.")
-        m.set_up_grasp(cube_locations['red'])
-    # m.check_if_reachable(p.get['red'])
-    
+    time.sleep(0.5)    
     # detected_blocks = p.get_detected_blocks()
 
-    # my_camera = Camera.Camera() 
-    # my_camera.camera_open()
-    # while True:
-    #     img = my_camera.frame
-    #     if img is not None:
-    #         frame = p.detect_cubes(img)
-    #         cv2.imshow('Frame', frame)
-    #         key = cv2.waitKey(1)
-    #         if key == 27:
-    #             break 
-    # my_camera.camera_close()
-    # cv2.destroyAllWindows()
+    my_camera = Camera.Camera() 
+    my_camera.camera_open()
+    in_position = False
+    while in_position == False:
+        img = my_camera.frame
+        if img is not None:
+            frame = p.detect_cubes(img)
+            cv2.imshow('Frame', frame)
+            cube_locations = p.get_cube_locs()
+            if m.check_if_reachable(cube_locations['red']):
+                print("Red cube is reachable.")
+                m.set_up_grasp(cube_locations['red'])
+                in_position = True
+            key = cv2.waitKey(1)
+            if key == 27:
+                break 
+    my_camera.camera_close()
+    cv2.destroyAllWindows()
     
