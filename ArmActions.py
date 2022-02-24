@@ -75,7 +75,7 @@ class ArmMover():
         Board.setBusServoPulse(2, servo2_angle, 500)
         time.sleep(1.5)
         #???
-        self.AK.setPitchRangeMoving((world_X, world_Y, 1.5), -90, -90, 0, 1000)
+        self.AK.setPitchRangeMoving((coords[0], coords[1], 1.5), -90, -90, 0, 1000)
         time.sleep(1.5)
 
     def open_gripper(self):
