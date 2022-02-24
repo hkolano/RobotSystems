@@ -59,6 +59,7 @@ class ArmMover():
 
     def check_if_reachable(self, coords):
         result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
+        print(result)
 
     def open_gripper(self):
         Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
@@ -72,6 +73,9 @@ if __name__ == "__main__":
     p = ColorTracker
     m = ArmMover()
     m.go_to_initial_position()
+    m.check_if_reachable(p.cube_locs['red'])
+    
+    # detected_blocks = p.get_detected_blocks()
 
     # my_camera = Camera.Camera() 
     # my_camera.camera_open()
