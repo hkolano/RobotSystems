@@ -58,6 +58,7 @@ class ArmMover():
         Board.RGB.show()
 
     def check_if_reachable(self, coords):
+        print("Checking if coords {} is reachable".format(coords))
         result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
         if result == False:
             print("not reachable.")
@@ -65,6 +66,7 @@ class ArmMover():
         else:
             print("reachable!")
             return True
+        # time.sleep(result[2]/1000)
 
     def set_up_grasp(self, coords):
         servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
