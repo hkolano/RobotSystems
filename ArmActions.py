@@ -73,6 +73,7 @@ if __name__ == "__main__":
     p = ColorTracker
     m = ArmMover()
     m.go_to_initial_position()
+    time.sleep(0.5)
     m.check_if_reachable(p.cube_locs['red'])
     
     # detected_blocks = p.get_detected_blocks()
