@@ -35,14 +35,13 @@ class Flight():
             img = self.cam.frame
             if img is not None:
                 ctr +=1 
+                frame = self.p.detect_cubes(img)
+                cv2.imshow('Frame', frame)
                 if ctr > 1000:
-                    frame = self.p.detect_cubes(img)
-                    cv2.imshow('Frame', frame)
-                    # _ = self.p.detect_cubes(img)
                     self.sort_next_block()
-                    key = cv2.waitKey(1)
-                    if key == 27:
-                        break 
+                key = cv2.waitKey(1)
+                if key == 27:
+                    break 
         self.cam.camera_close()
         cv2.destroyAllWindows()
 
