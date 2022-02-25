@@ -35,7 +35,7 @@ class Flight():
             img = self.cam.frame
             if img is not None:
                 ctr +=1 
-                if ctr > 20:
+                if ctr > 1000:
                     frame = self.p.detect_cubes(img)
                     cv2.imshow('Frame', frame)
                     # _ = self.p.detect_cubes(img)
