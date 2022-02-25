@@ -45,7 +45,7 @@ class Flight():
 
     def sort_next_block(self):
         blocks = self.p.get_detected_blocks()
-        # print("Blocks detected: {}")
+        print("Blocks detected: {}".format(blocks))
         if not blocks:
             print("No blocks detected.")
             self.blocks_present = False 
