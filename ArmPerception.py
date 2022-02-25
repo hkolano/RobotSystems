@@ -55,7 +55,7 @@ class ColorTracker():
         for color in desired_colors:
             self.update_cube_location(color)
         # print(self.get_detected_blocks())
-        print("detect cubes code finished. Cubes seen: {}s".format(self.cube_locs))
+        # print("detect cubes code finished. Cubes seen: {}s".format(self.cube_locs))
         return self.img_copy
 
 
