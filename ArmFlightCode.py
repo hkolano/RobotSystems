@@ -30,7 +30,7 @@ class Flight():
         self.cam = Camera.Camera() 
         self.cam.camera_open()
         self.blocks_present = True
-        while self.blocks_present == False:
+        while self.blocks_present == True:
             img = self.cam.frame
             if img is not None:
                 frame = self.p.detect_cubes(img)
@@ -44,6 +44,7 @@ class Flight():
 
     def sort_next_block(self):
         blocks = self.p.get_detected_blocks()
+        # print("Blocks detected: {}")
         if blocks == False:
             print("No blocks detected.")
             self.blocks_present = False 
@@ -54,7 +55,7 @@ class Flight():
             if self.m.check_if_reachable(block_loc):
                 self.m.grasp_cube_at_coords(block_loc)
                 self.m.drop_cube_in_square(color)        
-                
+
 
 if __name__ == "__main__":
     f = Flight()
