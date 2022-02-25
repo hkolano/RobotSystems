@@ -30,17 +30,18 @@ class Flight():
         self.cam = Camera.Camera() 
         self.cam.camera_open()
         self.blocks_present = True
+        ctr = 0
         while self.blocks_present == True:
             img = self.cam.frame
-            if img is not None:
+            if img is not None and ctr > 2:
                 frame = self.p.detect_cubes(img)
                 cv2.imshow('Frame', frame)
-                time.sleep(5)
-                _ = self.p.detect_cubes(img)
+                # _ = self.p.detect_cubes(img)
                 self.sort_next_block()
                 key = cv2.waitKey(1)
                 if key == 27:
                     break 
+            ctr += 1
         self.cam.camera_close()
         cv2.destroyAllWindows()
 
