@@ -36,6 +36,7 @@ class Flight():
                 frame = self.p.detect_cubes(img)
                 cv2.imshow('Frame', frame)
                 time.sleep(1)
+                _ = self.p.detect_cubes(img)
                 self.sort_next_block()
                 key = cv2.waitKey(1)
                 if key == 27:
