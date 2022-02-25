@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # coding=utf8
 import sys
+
+from numpy import square
 sys.path.append('/home/pi/ArmPi/')
 import cv2
 import time
@@ -70,6 +72,7 @@ class ArmMover():
         # time.sleep(result[2]/1000)
 
     def grasp_cube_at_coords(self, coords):
+        '''Picks up the cube located at the coordinates given'''
         servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
         self.open_gripper()
         time.sleep(0.8)
@@ -86,6 +89,27 @@ class ArmMover():
         Board.setBusServoPulse(2, 500, 500)
         self.AK.setPitchRangeMoving((coords[0], coords[1], 12), -90, -90, 0, 1000)
         time.sleep(1)
+
+    def drop_cube_in_square(self, square_color):
+        loc = self.coordinate[square_color]
+        result = self.AK.setPitchRangeMoving((loc[0], loc[1], 12), -90, -90, 0)   
+        time.sleep(result[2]/1000)
+
+        servo2_angle = getAngle(loc[0], loc[1], -90)
+        Board.setBusServoPulse(2, servo2_angle, 500)
+        time.sleep(0.5)
+
+        self.AK.setPitchRangeMoving((loc[0], loc[1], loc[2] + 3), -90, -90, 0, 500)
+        time.sleep(0.5)
+
+        self.AK.setPitchRangeMoving((loc), -90, -90, 0, 1000)
+        time.sleep(0.8)
+
+        self.open_gripper()
+        time.sleep(0.8)
+
+        self.AK.setPitchRangeMoving((loc[0], loc[1], 12), -90, -90, 0, 800)
+        time.sleep(0.8)
 
 
     def open_gripper(self):
@@ -115,6 +139,7 @@ if __name__ == "__main__":
             if m.check_if_reachable(cube_locations['red']):
                 print("Red cube is reachable.")
                 m.grasp_cube_at_coords(cube_locations['red'])
+                m.drop_cube_in_square('red')
                 in_position = True
             key = cv2.waitKey(1)
             if key == 27:
