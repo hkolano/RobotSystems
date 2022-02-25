@@ -62,7 +62,7 @@ class ColorTracker():
     def update_cube_location(self, color):
         mask, max_contour, max_area = self.detect_color_contours(color)
         if max_area > 2500:
-            biggest_contour_rect = self.get_bounding_box(max_contour, color)
+            self.get_bounding_box(max_contour, color)
         else:
             self.cube_locs[color] = [0, 0, 0]
 
