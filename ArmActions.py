@@ -61,13 +61,13 @@ class ArmMover():
         Board.RGB.show()
 
     def check_if_reachable(self, coords):
-        print("Checking if coords {} is reachable".format(coords))
+        # print("Checking if coords {} is reachable".format(coords))
         result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
         if result == False:
-            print("not reachable.")
+            # print("not reachable.")
             return False
         else:
-            print("reachable!")
+            # print("reachable!")
             return True
         # time.sleep(result[2]/1000)
 
@@ -127,23 +127,4 @@ if __name__ == "__main__":
     time.sleep(0.5)    
     # detected_blocks = p.get_detected_blocks()
 
-    my_camera = Camera.Camera() 
-    my_camera.camera_open()
-    in_position = False
-    while in_position == False:
-        img = my_camera.frame
-        if img is not None:
-            frame = p.detect_cubes(img)
-            cv2.imshow('Frame', frame)
-            cube_locations = p.get_cube_locs()
-            if m.check_if_reachable(cube_locations['red']):
-                print("Red cube is reachable.")
-                m.grasp_cube_at_coords(cube_locations['red'])
-                m.drop_cube_in_square('red')
-                in_position = True
-            key = cv2.waitKey(1)
-            if key == 27:
-                break 
-    my_camera.camera_close()
-    cv2.destroyAllWindows()
     
