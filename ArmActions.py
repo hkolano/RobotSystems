@@ -68,10 +68,10 @@ class ArmMover():
 
         Board.RGB.show()
 
-    def check_if_reachable(self, coords, height):
+    def check_if_reachable(self, coords, object):
         # print("Checking if coords {} is reachable".format(coords))
         # result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
-        result = self.AK.setPitchRangeMoving((coords[0], coords[1], height), -90, -90, 0)
+        result = self.AK.setPitchRangeMoving((coords[0], coords[1], self.heights[object]), -90, -90, 0)
         if result == False:
             # print("not reachable.")
             return False
