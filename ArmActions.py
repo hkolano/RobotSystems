@@ -27,8 +27,13 @@ class ArmMover():
     def __init__(self):
         self.AK = ArmIK()
         self.gripper_vals = {
-            'block': 500
+            'cube': 500,
+            'open': 220
         } 
+
+        self.heights = {
+            'cube': 7
+        }
 
         self.range_rgb = {
             'blue': (0, 0, 255),
@@ -94,7 +99,7 @@ class ArmMover():
         # Lower to around cube
         self.move_to_coords(coords[0], coords[1], 1.5)
         # close gripper
-        self.close_gripper()
+        self.close_gripper('cube')
         time.sleep(0.8)
         # raise the arm with the cube
         Board.setBusServoPulse(2, 500, 500)
@@ -124,7 +129,7 @@ class ArmMover():
 
 
     def open_gripper(self):
-        Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
+        Board.setBusServoPulse(1, self.gripper_vals['open'], 500)    
 
     def close_gripper(self, object):
         Board.setBusServoPulse(1, self.gripper_vals[object], 500)     
