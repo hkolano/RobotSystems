@@ -25,8 +25,10 @@ if sys.version_info.major == 2:
 class ArmMover():
 
     def __init__(self):
-        self.close_gripper_servo_value = 500
-        self.AK = ArmIK() 
+        self.AK = ArmIK()
+        self.gripper_vals = {
+            'block': 500
+        } 
 
         self.range_rgb = {
             'blue': (0, 0, 255),
@@ -48,6 +50,7 @@ class ArmMover():
         time.sleep(1.0)
         Board.setBusServoPulse(2, 500, 500)
         self.AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
+        time.sleep(1.5)
 
     def set_lights_to_color(self, color=None):
         # print(self.range_rgb[color])
@@ -60,9 +63,10 @@ class ArmMover():
 
         Board.RGB.show()
 
-    def check_if_reachable(self, coords):
+    def check_if_reachable(self, coords, height):
         # print("Checking if coords {} is reachable".format(coords))
-        result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
+        # result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
+        result = self.AK.setPitchRangeMoving((coords[0], coords[1], height), -90, -90, 0)
         if result == False:
             # print("not reachable.")
             return False
@@ -71,17 +75,24 @@ class ArmMover():
             return True
         # time.sleep(result[2]/1000)
 
+    def move_to_coords(self, x, y, height):
+        '''Moves gripper to location given'''
+        self.AK.setPitchRangeMoving((x, y, height), -90, -90, 0)
+        time.sleep(1.0)
+
+    def set_gripper_angle(self, angle):
+        Board.setBusServoPulse(2, angle, 500)
+        time.sleep(0.5)
+
     def grasp_cube_at_coords(self, coords):
         '''Picks up the cube located at the coordinates given'''
         servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
         self.open_gripper()
         time.sleep(0.8)
         # Move to above cube
-        Board.setBusServoPulse(2, servo2_angle, 500)
-        time.sleep(1.5)
+        self.set_gripper_angle(servo2_angle)
         # Lower to around cube
-        self.AK.setPitchRangeMoving((coords[0], coords[1], 1.5), -90, -90, 0, 1000)
-        time.sleep(1.5)
+        self.move_to_coords(coords[0], coords[1], 1.5)
         # close gripper
         self.close_gripper()
         time.sleep(0.8)
@@ -115,8 +126,8 @@ class ArmMover():
     def open_gripper(self):
         Board.setBusServoPulse(1, self.close_gripper_servo_value - 280, 500)    
 
-    def close_gripper(self):
-        Board.setBusServoPulse(1, self.close_gripper_servo_value, 500)     
+    def close_gripper(self, object):
+        Board.setBusServoPulse(1, self.gripper_vals[object], 500)     
 
 
 if __name__ == "__main__":
