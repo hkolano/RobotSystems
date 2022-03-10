@@ -36,12 +36,14 @@ class ArmMover():
             'cube': {
                 'above':7,
                 'ground':1.5,
-                'drop':3
+                'drop':3, 
+                'drag':3
             },
             'wall': {
                 'above': 12,
                 'ground': 6,
-                'drop': 7
+                'drop': 7, 
+                'drag': 8
             }
         }
 
@@ -120,13 +122,16 @@ class ArmMover():
         self.close_gripper(object)
         if lift == True:
             self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
+        else:
+            self.move_to_coords(coords[0], coords[1], self.heights[object]['drag'])
 
     def wall_move(self, frompos='wall_block', topos='wall_away'):
         og_coords = [self.coordinate[frompos][0], self.coordinate[frompos][1], 0]
         new_coords = [self.coordinate[topos][0], self.coordinate[topos][1], 0]
-        self.grasp_obj_at_coords(og_coords, 'wall', lift=False)
+        self.grasp_obj_at_coords(og_coords, 'wall', lift=True)
         # self.straighten_gripper(og_coords[0], og_coords[1])
-        self.move_to_coords(*new_coords)
+        self.move_to_coords(new_coords[0], new_coords[1], self.heights['wall']['drag'])
+        self.move_to_coords(*new_coords, duration=0.5)
         self.straighten_gripper(new_coords[0], new_coords[1])
         self.open_gripper()
         self.move_to_coords(new_coords[0], new_coords[1], 12)
