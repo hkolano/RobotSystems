@@ -88,14 +88,15 @@ class ArmMover():
             return True
         # time.sleep(result[2]/1000)
 
-    def move_to_coords(self, x, y, height):
-        '''Moves gripper to location given'''
+    def move_to_coords(self, x, y, height, duration=1.5):
+        '''Moves gripper to location provided
+        optional input: duration of movement'''
         self.AK.setPitchRangeMoving((x, y, height), -90, -90, 0)
-        time.sleep(1.5)
+        time.sleep(duration)
 
     def set_gripper_angle(self, angle):
         Board.setBusServoPulse(2, angle, 500)
-        time.sleep(0.5)
+        time.sleep(0.8)
 
     def grasp_obj_at_coords(self, coords, object):
         '''Picks up the object located at the coordinates given'''
@@ -122,16 +123,17 @@ class ArmMover():
         straight_angle = getAngle(loc[0], loc[1], -90)
         self.set_gripper_angle(straight_angle)
 
-        self.AK.setPitchRangeMoving((loc[0], loc[1], loc[2] + 3), -90, -90, 0, 500)
-        time.sleep(0.5)
+        self.move_to_coords(loc[0], loc[1], self.heights[object]['drop'], duration=0.5)
 
-        self.AK.setPitchRangeMoving((loc), -90, -90, 0, 1000)
-        time.sleep(0.8)
+        # self.AK.setPitchRangeMoving((loc), -90, -90, 0, 1000)
+        # time.sleep(0.8)
 
         self.open_gripper()
 
-        self.AK.setPitchRangeMoving((loc[0], loc[1], 12), -90, -90, 0, 800)
-        time.sleep(0.8)
+        self.move_to_coords(loc[0], loc[1], self.heights[object]['above'], duration=0.8)
+
+        # self.AK.setPitchRangeMoving((loc[0], loc[1], 12), -90, -90, 0, 800)
+        # time.sleep(0.8)
 
 
     def open_gripper(self):
