@@ -121,14 +121,15 @@ class ArmMover():
         if lift == True:
             self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
 
-    def remove_wall(self):
-        coords = [self.coordinate['wall_block'][0], self.coordinate['wall_block'][1], 0]
-        self.grasp_obj_at_coords(coords, 'wall', lift=False)
-        self.straighten_gripper(coords[0], coords[1])
-        self.move_to_coords(*self.coordinate['wall_away'])
+    def wall_move(self, frompos='wall_block', topos='wall_away'):
+        og_coords = [self.coordinate[frompos][0], self.coordinate[frompos][1], 0]
+        new_coords = [self.coordinate[topos][0], self.coordinate[topos][1], 0]
+        self.grasp_obj_at_coords(og_coords, 'wall', lift=False)
+        # self.straighten_gripper(og_coords[0], og_coords[1])
+        self.move_to_coords(*new_coords)
+        self.straighten_gripper(new_coords[0], new_coords[1])
         self.open_gripper()
-        self.move_to_coords(self.coordinate['wall_away'][0], self.coordinate['wall_away'][1], 12)
-        
+        self.move_to_coords(new_coords[0], new_coords[1], 12)
 
     def drop_cube_in_square(self, square_color):
         loc = self.coordinate[square_color]
