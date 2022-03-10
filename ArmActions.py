@@ -32,7 +32,8 @@ class ArmMover():
         } 
 
         self.heights = {
-            'cube': 7
+            'above_cube': 7,
+            'cube': 1.5
         }
 
         self.range_rgb = {
@@ -89,21 +90,21 @@ class ArmMover():
         Board.setBusServoPulse(2, angle, 500)
         time.sleep(0.5)
 
-    def grasp_cube_at_coords(self, coords):
+    def grasp_obj_at_coords(self, coords, object):
         '''Picks up the cube located at the coordinates given'''
-        servo2_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
+        self.move_to_coords(coords[0], coords[1], self.heights['above_cube'])
         self.open_gripper()
-        time.sleep(0.8)
         # Move to above cube
-        self.set_gripper_angle(servo2_angle)
+        gripper_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
+        self.set_gripper_angle(gripper_angle)
         # Lower to around cube
-        self.move_to_coords(coords[0], coords[1], 1.5)
+        self.move_to_coords(coords[0], coords[1], self.heights[object])
         # close gripper
         self.close_gripper('cube')
-        time.sleep(0.8)
         # raise the arm with the cube
-        Board.setBusServoPulse(2, 500, 500)
-        self.AK.setPitchRangeMoving((coords[0], coords[1], 12), -90, -90, 0, 1000)
+        # Board.setBusServoPulse(2, 500, 500)
+        self.move_to_coords(coords[0], coords[1], self.heights['above_cube'])
+        # self.AK.setPitchRangeMoving((coords[0], coords[1], 12), -90, -90, 0, 1000)
         time.sleep(1)
 
     def drop_cube_in_square(self, square_color):
@@ -122,17 +123,18 @@ class ArmMover():
         time.sleep(0.8)
 
         self.open_gripper()
-        time.sleep(0.8)
 
         self.AK.setPitchRangeMoving((loc[0], loc[1], 12), -90, -90, 0, 800)
         time.sleep(0.8)
 
 
     def open_gripper(self):
-        Board.setBusServoPulse(1, self.gripper_vals['open'], 500)    
+        Board.setBusServoPulse(1, self.gripper_vals['open'], 500)
+        time.sleep(0.8)    
 
     def close_gripper(self, object):
         Board.setBusServoPulse(1, self.gripper_vals[object], 500)     
+        time.sleep(0.8)
 
 
 if __name__ == "__main__":
