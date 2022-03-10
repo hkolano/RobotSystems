@@ -56,7 +56,7 @@ class Flight():
             print("Sorting {} block next.".format(color))
             block_loc = self.p.cube_locs[color]
             if self.m.check_if_reachable(block_loc, 'cube'):
-                self.m.grasp_cube_at_coords(block_loc)
+                self.m.grasp_obj_at_coords(block_loc, 'cube')
                 self.m.drop_cube_in_square(color)        
 
 
