@@ -65,6 +65,7 @@ class ArmMover():
             }
 
     def go_to_initial_position(self):
+        ''' Send the robot to the "home" position.'''
         logging.info("Moving arm to initial position.")
         self.open_gripper()
         time.sleep(1.0)
@@ -102,15 +103,17 @@ class ArmMover():
         time.sleep(duration)
 
     def set_gripper_angle(self, angle):
+        '''Sets gripper angle based on angle of object wrt world x plane'''
         Board.setBusServoPulse(2, angle, 500)
         time.sleep(0.8)
 
     def straighten_gripper(self, x, y, des_angle=0):
+        '''Straightens gripper to 0 degrees, based on the location of the end effector in world'''
         straight_angle = getAngle(x, y, des_angle)
         self.set_gripper_angle(straight_angle)
 
     def grasp_obj_at_coords(self, coords, object, lift=True):
-        '''Picks up the object located at the coordinates given'''
+        '''Picks up the object located at the coordinates given (coords: [x, y, angle])'''
         # move to above the object and open the gripper
         self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
         self.open_gripper()
@@ -126,6 +129,7 @@ class ArmMover():
             self.move_to_coords(coords[0], coords[1], self.heights[object]['drag'])
 
     def wall_move(self, frompos='wall_block', topos='wall_away'):
+        '''Moves to or from initial position to the "away" position.'''
         og_coords = [self.coordinate[frompos][0], self.coordinate[frompos][1], 0]
         new_coords = [self.coordinate[topos][0], self.coordinate[topos][1], 0]
         self.grasp_obj_at_coords(og_coords, 'wall', lift=True)
@@ -158,6 +162,7 @@ class ArmMover():
         time.sleep(0.8)    
 
     def close_gripper(self, object):
+        '''closes the gripper on object. Use 'cube' for cube or 'wall' for wall.'''
         Board.setBusServoPulse(1, self.gripper_vals[object], 500)     
         time.sleep(0.8)
 
@@ -167,7 +172,8 @@ if __name__ == "__main__":
     p = ColorTracker()
     m = ArmMover()
     m.go_to_initial_position()
-    time.sleep(0.5)    
+    time.sleep(0.5) 
+       
     # detected_blocks = p.get_detected_blocks()
 
     
