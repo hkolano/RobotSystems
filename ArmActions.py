@@ -36,12 +36,12 @@ class ArmMover():
             'cube': {
                 'above':7,
                 'ground':1.5,
-                'drop':4.5
+                'drop':3
             },
             'wall': {
-                'above': 13,
-                'ground': 8,
-                'drop': 9
+                'above': 12,
+                'ground': 6,
+                'drop': 7
             }
         }
 
@@ -58,8 +58,8 @@ class ArmMover():
             'red':   (-15 + 0.5, 12 - 0.5, 1.5),
             'green': (-15 + 0.5, 6 - 0.5,  1.5),
             'blue':  (-15 + 0.5, 0 - 0.5,  1.5),
-            'wall_block': (13, 15, 8), 
-            'wall_away': (13, 0, 8)
+            'wall_block': (15, 15, 6), 
+            'wall_away': (15, 0, 7)
             }
 
     def go_to_initial_position(self):
@@ -107,7 +107,7 @@ class ArmMover():
         straight_angle = getAngle(x, y, des_angle)
         self.set_gripper_angle(straight_angle)
 
-    def grasp_obj_at_coords(self, coords, object):
+    def grasp_obj_at_coords(self, coords, object, lift=True):
         '''Picks up the object located at the coordinates given'''
         # move to above the object and open the gripper
         self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
@@ -118,7 +118,13 @@ class ArmMover():
         # Lower to around cube
         self.move_to_coords(coords[0], coords[1], self.heights[object]['ground'])
         self.close_gripper(object)
-        self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
+        if lift == True:
+            self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
+
+    def move_wall_away(self):
+        coords = [self.coordinate['wall_block'][0], self.coordinate['wall_block'][1], 0]
+        self.grasp_obj_at_coords(coords, 'wall', lift=False)
+        self.straighten_gripper(coords[0], coords[1])
 
     def drop_cube_in_square(self, square_color):
         loc = self.coordinate[square_color]
