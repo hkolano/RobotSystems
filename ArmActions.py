@@ -103,6 +103,10 @@ class ArmMover():
         Board.setBusServoPulse(2, angle, 500)
         time.sleep(0.8)
 
+    def straighten_gripper(self, x, y, des_angle=0):
+        straight_angle = getAngle(x, y, des_angle)
+        self.set_gripper_angle(straight_angle)
+
     def grasp_obj_at_coords(self, coords, object):
         '''Picks up the object located at the coordinates given'''
         # move to above the object and open the gripper
