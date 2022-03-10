@@ -41,7 +41,7 @@ class ArmMover():
             },
             'wall': {
                 'above': 12,
-                'ground': 6,
+                'ground': 7,
                 'drop': 7, 
                 'drag': 8
             }
@@ -131,7 +131,7 @@ class ArmMover():
         self.grasp_obj_at_coords(og_coords, 'wall', lift=True)
         # self.straighten_gripper(og_coords[0], og_coords[1])
         self.move_to_coords(new_coords[0], new_coords[1], self.heights['wall']['drag'])
-        self.move_to_coords(*new_coords, duration=0.5)
+        self.move_to_coords(new_coords[0], new_coords[1], self.heights['wall']['ground'], duration=0.5)
         self.straighten_gripper(new_coords[0], new_coords[1])
         self.open_gripper()
         self.move_to_coords(new_coords[0], new_coords[1], 12)
