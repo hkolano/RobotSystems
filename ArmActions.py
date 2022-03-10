@@ -123,18 +123,10 @@ class ArmMover():
         straight_angle = getAngle(loc[0], loc[1], -90)
         self.set_gripper_angle(straight_angle)
 
+        # drop object
         self.move_to_coords(loc[0], loc[1], self.heights[object]['drop'], duration=0.5)
-
-        # self.AK.setPitchRangeMoving((loc), -90, -90, 0, 1000)
-        # time.sleep(0.8)
-
         self.open_gripper()
-
         self.move_to_coords(loc[0], loc[1], self.heights[object]['above'], duration=0.8)
-
-        # self.AK.setPitchRangeMoving((loc[0], loc[1], 12), -90, -90, 0, 800)
-        # time.sleep(0.8)
-
 
     def open_gripper(self):
         Board.setBusServoPulse(1, self.gripper_vals['open'], 500)

@@ -31,6 +31,7 @@ class Flight():
         self.cam.camera_open()
         self.blocks_present = True
         ctr = 0
+        self.m.go_to_initial_position()
         while self.blocks_present == True:
             img = self.cam.frame
             if img is not None:
@@ -57,7 +58,8 @@ class Flight():
             block_loc = self.p.cube_locs[color]
             if self.m.check_if_reachable(block_loc, 'cube'):
                 self.m.grasp_obj_at_coords(block_loc, 'cube')
-                self.m.drop_cube_in_square(color)        
+                self.m.drop_cube_in_square(color)   
+                self.m.go_to_initial_position()     
 
 
 if __name__ == "__main__":
