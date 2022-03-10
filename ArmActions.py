@@ -32,8 +32,14 @@ class ArmMover():
         } 
 
         self.heights = {
-            'above_cube': 7,
-            'cube': 1.5
+            'cube': {
+                'above':7,
+                'ground':1.5,
+                'drop':4.5
+            },
+            'wall': {
+                'above': 12
+            }
         }
 
         self.range_rgb = {
@@ -44,6 +50,7 @@ class ArmMover():
             'white': (255, 255, 255),
             }
 
+        # Coordinates of colored boxes on mat
         self.coordinate = {
             'red':   (-15 + 0.5, 12 - 0.5, 1.5),
             'green': (-15 + 0.5, 6 - 0.5,  1.5),
@@ -72,7 +79,7 @@ class ArmMover():
     def check_if_reachable(self, coords, object):
         # print("Checking if coords {} is reachable".format(coords))
         # result = self.AK.setPitchRangeMoving((coords[0], coords[1], 7), -90, -90, 0)
-        result = self.AK.setPitchRangeMoving((coords[0], coords[1], self.heights[object]), -90, -90, 0)
+        result = self.AK.setPitchRangeMoving((coords[0], coords[1], self.heights[object]['ground']), -90, -90, 0)
         if result == False:
             # print("not reachable.")
             return False
@@ -84,37 +91,36 @@ class ArmMover():
     def move_to_coords(self, x, y, height):
         '''Moves gripper to location given'''
         self.AK.setPitchRangeMoving((x, y, height), -90, -90, 0)
-        time.sleep(1.0)
+        time.sleep(1.5)
 
     def set_gripper_angle(self, angle):
         Board.setBusServoPulse(2, angle, 500)
         time.sleep(0.5)
 
     def grasp_obj_at_coords(self, coords, object):
-        '''Picks up the cube located at the coordinates given'''
-        self.move_to_coords(coords[0], coords[1], self.heights['above_cube'])
+        '''Picks up the object located at the coordinates given'''
+        # move to above the object and open the gripper
+        self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
         self.open_gripper()
-        # Move to above cube
+        # Set the gripper angle
         gripper_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
         self.set_gripper_angle(gripper_angle)
         # Lower to around cube
-        self.move_to_coords(coords[0], coords[1], self.heights[object])
-        # close gripper
-        self.close_gripper('cube')
-        # raise the arm with the cube
-        # Board.setBusServoPulse(2, 500, 500)
-        self.move_to_coords(coords[0], coords[1], self.heights['above_cube'])
-        # self.AK.setPitchRangeMoving((coords[0], coords[1], 12), -90, -90, 0, 1000)
-        time.sleep(1)
+        self.move_to_coords(coords[0], coords[1], self.heights[object]['ground'])
+        self.close_gripper(object)
+        self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
 
     def drop_cube_in_square(self, square_color):
         loc = self.coordinate[square_color]
-        result = self.AK.setPitchRangeMoving((loc[0], loc[1], 12), -90, -90, 0)   
-        time.sleep(result[2]/1000)
+        self.drop_obj_in_loc(loc, 'cube')
 
-        servo2_angle = getAngle(loc[0], loc[1], -90)
-        Board.setBusServoPulse(2, servo2_angle, 500)
-        time.sleep(0.5)
+    def drop_obj_in_loc(self, loc, object):
+        '''Places an (already grasped) object in a location'''
+        # move to location over object
+        self.move_to_coords(loc[0], loc[1], self.heights[object]['above'])
+        # set the angle to be straight
+        straight_angle = getAngle(loc[0], loc[1], -90)
+        self.set_gripper_angle(straight_angle)
 
         self.AK.setPitchRangeMoving((loc[0], loc[1], loc[2] + 3), -90, -90, 0, 500)
         time.sleep(0.5)
