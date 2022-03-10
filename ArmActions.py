@@ -28,7 +28,8 @@ class ArmMover():
         self.AK = ArmIK()
         self.gripper_vals = {
             'cube': 500,
-            'open': 220
+            'open': 220, 
+            'wall': 600
         } 
 
         self.heights = {
@@ -38,7 +39,9 @@ class ArmMover():
                 'drop':4.5
             },
             'wall': {
-                'above': 12
+                'above': 13,
+                'ground': 8,
+                'drop': 9
             }
         }
 
@@ -55,6 +58,8 @@ class ArmMover():
             'red':   (-15 + 0.5, 12 - 0.5, 1.5),
             'green': (-15 + 0.5, 6 - 0.5,  1.5),
             'blue':  (-15 + 0.5, 0 - 0.5,  1.5),
+            'wall_block': (13, 15, 8), 
+            'wall_away': (13, 0, 8)
             }
 
     def go_to_initial_position(self):
