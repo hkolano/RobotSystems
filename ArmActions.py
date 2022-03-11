@@ -38,7 +38,7 @@ class ArmMover():
                 'truck':8.5
             },
             'wall': {
-                'ground': 7
+                'ground': 7,
                 'drag': 8
             }
         }
@@ -117,7 +117,7 @@ class ArmMover():
         self.move_to_loc(loc, self.heights[object][obj_height]+8)
         self.open_gripper()
         # Set the gripper angle
-        gripper_angle = getAngle(loc, pose[1]) #Calculate the angle by which the gripper needs to be rotated
+        gripper_angle = getAngle(*loc, pose[1]) #Calculate the angle by which the gripper needs to be rotated
         self.set_gripper_angle(gripper_angle)
         # Lower to around cube
         self.move_to_loc(loc, self.heights[object][obj_height])
