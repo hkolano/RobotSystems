@@ -34,16 +34,11 @@ class ArmMover():
 
         self.heights = {
             'cube': {
-                'above':7,
                 'ground':1.5,
-                'drop':3, 
-                'drag':3
+                'truck':8.5
             },
             'wall': {
-                'above': 12,
-                'ground': 7,
-                'drop': 7, 
-                'drag': 8
+                'ground': 7
             }
         }
 
@@ -112,19 +107,19 @@ class ArmMover():
         straight_angle = getAngle(x, y, des_angle)
         self.set_gripper_angle(straight_angle)
 
-    def grasp_obj_at_coords(self, coords, object, lift=True):
+    def grasp_obj_at_coords(self, coords, object, obj_height, lift=True):
         '''Picks up the object located at the coordinates given (coords: [x, y, angle])'''
         # move to above the object and open the gripper
-        self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
+        self.move_to_coords(coords[0], coords[1], self.heights[object][obj_height]+5)
         self.open_gripper()
         # Set the gripper angle
         gripper_angle = getAngle(*coords) #Calculate the angle by which the gripper needs to be rotated
         self.set_gripper_angle(gripper_angle)
         # Lower to around cube
-        self.move_to_coords(coords[0], coords[1], self.heights[object]['ground'])
+        self.move_to_coords(coords[0], coords[1], self.heights[object][obj_height])
         self.close_gripper(object)
         if lift == True:
-            self.move_to_coords(coords[0], coords[1], self.heights[object]['above'])
+            self.move_to_coords(coords[0], coords[1], self.heights[object][obj_height]+5)
         else:
             self.move_to_coords(coords[0], coords[1], self.heights[object]['drag'])
 
@@ -144,18 +139,18 @@ class ArmMover():
         loc = self.coordinate[square_color]
         self.drop_obj_in_loc(loc, 'cube')
 
-    def drop_obj_in_loc(self, loc, object):
+    def drop_obj_in_loc(self, loc, object, obj_height='ground'):
         '''Places an (already grasped) object in a location'''
         # move to location over object
-        self.move_to_coords(loc[0], loc[1], self.heights[object]['above'])
+        self.move_to_coords(loc[0], loc[1], self.heights[object][obj_height]+5)
         # set the angle to be straight
         straight_angle = getAngle(loc[0], loc[1], -90)
         self.set_gripper_angle(straight_angle)
 
         # drop object
-        self.move_to_coords(loc[0], loc[1], self.heights[object]['drop'], duration=0.5)
+        self.move_to_coords(loc[0], loc[1], self.heights[object][obj_height]+1, duration=0.5)
         self.open_gripper()
-        self.move_to_coords(loc[0], loc[1], self.heights[object]['above'], duration=0.8)
+        self.move_to_coords(loc[0], loc[1], self.heights[object][obj_height]+5, duration=0.8)
 
     def open_gripper(self):
         Board.setBusServoPulse(1, self.gripper_vals['open'], 500)
